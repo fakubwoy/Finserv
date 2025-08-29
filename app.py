@@ -6,12 +6,11 @@ import os
 app = Flask(__name__)
 CORS(app)
 
-# User details - Replace with your actual details
 USER_DETAILS = {
-    "full_name": "john_doe",  # Replace with your actual name in lowercase
-    "birth_date": "17091999",  # Replace with your actual birth date (ddmmyyyy)
-    "email": "john@xyz.com",  # Replace with your actual email
-    "roll_number": "ABCD123"  # Replace with your actual roll number
+    "full_name": "farhaan_khan",  
+    "birth_date": "05032004",  
+    "email": "farhaan.khan2022@vitstudent.ac.in", 
+    "roll_number": "22BKT0054"  
 }
 
 def process_data(data):
@@ -24,11 +23,10 @@ def process_data(data):
         "alphabets": [],
         "special_characters": [],
         "sum": 0,
-        "all_alphabets": []  # For concat_string processing
+        "all_alphabets": []  
     }
     
     for item in data:
-        # Check if item is a number
         if item.isdigit() or (item.startswith('-') and item[1:].isdigit()):
             num = int(item)
             result["sum"] += num
@@ -38,14 +36,11 @@ def process_data(data):
             else:
                 result["odd_numbers"].append(str(item))
                 
-        # Check if item contains only alphabetic characters
         elif re.match(r'^[a-zA-Z]+$', item):
             result["alphabets"].append(item.upper())
-            # Store individual characters for concat_string
             for char in item:
                 result["all_alphabets"].append(char)
                 
-        # Everything else is a special character
         else:
             result["special_characters"].append(item)
     
@@ -58,15 +53,13 @@ def create_concat_string(all_alphabets):
     if not all_alphabets:
         return ""
     
-    # Reverse the order
     reversed_chars = all_alphabets[::-1]
     
-    # Apply alternating caps (starting with uppercase)
     concat_result = ""
     for i, char in enumerate(reversed_chars):
-        if i % 2 == 0:  # Even index -> uppercase
+        if i % 2 == 0:  
             concat_result += char.upper()
-        else:  # Odd index -> lowercase
+        else:  
             concat_result += char.lower()
     
     return concat_result
@@ -77,10 +70,8 @@ def process_bfhl():
     Main POST endpoint that processes the data array
     """
     try:
-        # Get JSON data from request
         request_data = request.get_json()
         
-        # Validate input
         if not request_data or 'data' not in request_data:
             return jsonify({
                 "is_success": False,
@@ -89,20 +80,16 @@ def process_bfhl():
         
         data = request_data['data']
         
-        # Validate that data is a list
         if not isinstance(data, list):
             return jsonify({
                 "is_success": False,
                 "error": "'data' must be an array."
             }), 400
         
-        # Process the data
         processed = process_data(data)
         
-        # Create concatenated string
         concat_string = create_concat_string(processed["all_alphabets"])
         
-        # Build response
         response = {
             "is_success": True,
             "user_id": f"{USER_DETAILS['full_name']}_{USER_DETAILS['birth_date']}",
